@@ -108,7 +108,7 @@ class VspAntoanController
         ];
     }
 
-    public function search_items($search_params)
+    public function search_items($search_params, $public = true)
     {
 
         global $wpdb;
@@ -116,20 +116,22 @@ class VspAntoanController
 
         $where = 'WHERE 1=1'; // Điều kiện mặc định
 
-        if (! empty($search_params['hoten'])) {
-            $where .= $wpdb->prepare(" AND hoten LIKE %s", '%' . $wpdb->esc_like($search_params['hoten']) . '%');
-        }
+        if (! $public) {
+            if (! empty($search_params['hoten'])) {
+                $where .= $wpdb->prepare(" AND hoten LIKE %s", '%' . $wpdb->esc_like($search_params['hoten']) . '%');
+            }
 
-        if (! empty($search_params['danhso'])) {
-            $where .= $wpdb->prepare(" AND danhso LIKE %s", '%' . $wpdb->esc_like($search_params['danhso']) . '%');
-        }
+            if (! empty($search_params['danhso'])) {
+                $where .= $wpdb->prepare(" AND danhso LIKE %s", '%' . $wpdb->esc_like($search_params['danhso']) . '%');
+            }
 
-        if (! empty($search_params['phongban'])) {
-            $where .= $wpdb->prepare(" AND phongban = %s", $search_params['phongban']);
-        }
+            if (! empty($search_params['phongban'])) {
+                $where .= $wpdb->prepare(" AND phongban = %s", $search_params['phongban']);
+            }
 
-        if (! empty($search_params['xuongnhom'])) {
-            $where .= $wpdb->prepare(" AND xuongnhom = %s", $search_params['xuongnhom']);
+            if (! empty($search_params['xuongnhom'])) {
+                $where .= $wpdb->prepare(" AND xuongnhom = %s", $search_params['xuongnhom']);
+            }
         }
 
         if (! empty($search_params['khachhang'])) {
@@ -144,7 +146,15 @@ class VspAntoanController
             $where .= $wpdb->prepare(" AND tinhtrangdichvu = %s", $search_params['tinhtrangdichvu']);
         }
 
-        $query = "SELECT * FROM $table $where";
+        if ($public) {
+            $select_fields = 'khachhang, loaiduan, khuvuc, tinhtrangdichvu';
+        } else {
+            $select_fields = '*';
+        }
+
+        $query = "SELECT $select_fields FROM $table $where";
+
+        error_log($query);
 
         $results = $wpdb->get_results($query, ARRAY_A);
         return $results;

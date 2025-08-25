@@ -67,12 +67,20 @@ function vsp_antoan_search_form_shortcode()
     if (is_user_logged_in()) {
         ob_start();
         require_once plugin_dir_path(__FILE__) . 'controllers/vsp_antoan_controller.php';
-        require_once plugin_dir_path(__FILE__) . 'views/vsp_antoan_search_form.php'; // Tạo file view này
+        require_once plugin_dir_path(__FILE__) . 'views/vsp_antoan_search_form.php';
         $controller = new VspAntoanController();
         vsp_antoan_search_form($controller); // Gọi hàm hiển thị form
         return ob_get_clean();
+    } else {
+        ob_start();
+        require_once plugin_dir_path(__FILE__) . 'controllers/vsp_antoan_controller.php';
+        require_once plugin_dir_path(__FILE__) . 'views/vsp_antoan_search_public_form.php';
+        $controller = new VspAntoanController();
+        vsp_antoan_search_public_form($controller); // Gọi hàm hiển thị form
+        return ob_get_clean();
+
     }
-    return 'Bạn cần phải <a href="' . esc_url(wp_login_url(get_permalink())) . '">đăng nhập</a> để sử dụng chức năng tìm kiếm.';
+
 }
 
 // * Enqueue styles for the plugin and localize script for AJAX
@@ -90,26 +98,35 @@ function vsp_enqueue_styles()
 
     // Enqueued script with localized data.
     wp_enqueue_script('vsp-plugin-script');
+
 }
 
 add_action('wp_enqueue_scripts', 'vsp_enqueue_styles');
 
 // * AJAX callback cho form tìm kiếm
 add_action('wp_ajax_vsp_antoan_search', 'vsp_antoan_search_callback');
-// add_action('wp_ajax_nopriv_vsp_antoan_search', 'vsp_antoan_search_callback'); // Vô hiệu hóa cho người dùng chưa đăng nhập
+add_action('wp_ajax_nopriv_vsp_antoan_search', 'vsp_antoan_search_callback'); // Vô hiệu hóa cho người dùng chưa đăng nhập
 
 function vsp_antoan_search_callback()
 {
     require_once plugin_dir_path(__FILE__) . 'controllers/vsp_antoan_controller.php';
     $controller = new VspAntoanController();
+    if (is_user_logged_in()) {
 
-    $results = $controller->search_items($_POST);
+        $results = $controller->search_items($_POST, false);
+    } else {
+        $results = $controller->search_items($_POST, true);
+    }
 
     // Bắt đầu output buffering để lấy nội dung từ file view
     ob_start();
 
     // Tải file view và truyền biến $results
-    require_once plugin_dir_path(__FILE__) . 'views/vsp_antoan_search_results.php';
+    if (is_user_logged_in()) {
+        require_once plugin_dir_path(__FILE__) . 'views/vsp_antoan_search_results.php';
+    } else {
+        require_once plugin_dir_path(__FILE__) . 'views/vsp_antoan_search_public_results.php';
+    }
 
     // Lấy nội dung từ buffer và làm sạch nó
     $output = ob_get_clean();
