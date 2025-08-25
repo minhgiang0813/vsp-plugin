@@ -1,0 +1,32 @@
+.vsp-search-form .search-form-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+    /* Khoảng cách giữa các hàng */
+}
+
+.vsp-search-form .search-form-row p {
+    width: 30%;
+    /* Chiều rộng của mỗi ô */
+    margin-right: 2%;
+    /* Khoảng cách giữa các ô */
+    margin-bottom: 0;
+    /* Loại bỏ margin mặc định của thẻ p */
+}
+
+.vsp-search-form label {
+    display: block;
+    /* Hiển thị label trên đầu input/select */
+    margin-bottom: 5px;
+}
+
+.vsp-search-form input[type="text"],
+.vsp-search-form select {
+    width: 100%;
+    /* Chiều rộng của input/select là 100% của ô chứa nó */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    /* Đảm bảo padding và border không làm tăng kích thước phần tử */
+}
