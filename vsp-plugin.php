@@ -51,7 +51,7 @@ function vsp_register_antoan_menu()
     add_menu_page(
         'An Toàn',              // Tiêu đề trang
         'An Toàn',              // Tên menu
-        'manage_options',        // Quyền truy cập
+        'edit_posts',            // Quyền truy cập
         'vsp-antoan',            // slug
         'vsp_antoan_admin_page', // Callback hiển thị nội dung
         'dashicons-shield',      // Icon
